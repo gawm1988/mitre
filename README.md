@@ -11,14 +11,35 @@ python3 ./models/DownloadModel.py --name all-MiniLM-L6-v2 --model_path sentence-
 ```
 
 ### Extract data from MITRE ATT&CK matrix
+Download latest version (v17) of the ATT&CK matrix (.xlsx) from [MITRE](https://attack.mitre.org/resources/attack-data-and-tools/)
 ```bash
 python3 ./resources/ExtractData.py
 ```
 
 ## Create Embeddings
-- [ ] Prepare data
-- [ ] Create embeddings
+### Text preprocessing:
+- [ ] Chunk data for Strings that exceed 512 tokens
+- [ ] Stopword and / or links removal
+- [ ] Build average of all sentences for each technique
+### Run sentence-transformer
 
+## Reduce dimensionality:
+- [ ] Use dimensionality reduction algorithm to reduce vector to x dimensions
+## Build similarity matrix
+## Run cluster algorithms
+### k-means
+### AHC
+### HDBSCAN
+### Gaussian mixture
+
+## Evaluate cluster
+### External metric 
+- [ ] to compare to ground truth
+### internal metric 
+- [ ] detect outliers and uncertain tactic assignment
+
+### Compare results manually
+- [ ] how do the results differ from similarity in human language?
 
 ***
 ```
