@@ -7,16 +7,23 @@ Select a sentence-transformer model from [huggingface.co](https://huggingface.co
 [sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) and download it by executing:
 
 ```bash
-python3 ./models/DownloadModel.py --name all-MiniLM-L6-v2 --model_path sentence-transformers
+python3 ./models/DownloadModel.py --model_name all-MiniLM-L6-v2 --model_path sentence-transformers
 ```
 
 ### Extract data from MITRE ATT&CK matrix
-Download latest version (v17) of the ATT&CK matrix (.xlsx) from [MITRE](https://attack.mitre.org/resources/attack-data-and-tools/)
+Download latest version (v17) of the ATT&CK matrix (.xlsx) from [MITRE](https://attack.mitre.org/resources/attack-data-and-tools/).
+Extract the ID, title and description, tactics from the matrix and save them as a new list techniques.csv:
 ```bash
 python3 ./resources/ExtractData.py
 ```
 
 ## Create Embeddings
+Create embeddings for each technique. Texts that exceed the max_sequence_length of a model will be chunked into smaller parts and aggregated by weighted mean pooling.
+```bash
+python3 ./embeddings/CreateEmbeddings.py --model_name all-MiniLM-L6-v2
+```
+
+
 ### Text preprocessing:
 - [ ] Chunk data for Strings that exceed 512 tokens
 - [ ] Stopword and / or links removal
