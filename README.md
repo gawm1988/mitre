@@ -4,7 +4,14 @@
 
 ### Select a language model
 Select a sentence-transformer model from [huggingface.co](https://huggingface.co/sentence-transformers/models), e.g. 
-[sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) and download it by executing:
+[sentence-transformers/ and download it by executing:
+
+|          Model | [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) | [all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) | [SentSecBERT_10k](https://huggingface.co/QCRI/SentSecBert_10k) |
+|---------------:|:---------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|:--------------------------------------------------------------:|
+|           Path |                               sentence-transformer                                |                                sentence-transformer                                 |                              QCRI                              |
+|     Dimensions |                                        768                                        |                                         384                                         |                               ?                                |
+| Max_Seq_Lenght |                                        384                                        |                                         256                                         |                               ?                                |
+|           Size |                                      120 MB                                       |                                        80 MB                                        |                               ?                                |
 
 ```bash
 python3 ./models/DownloadModel.py --model_name all-MiniLM-L6-v2 --model_path sentence-transformers
@@ -18,21 +25,18 @@ python3 ./resources/ExtractData.py
 ```
 
 ## Create Embeddings
-Create embeddings for each technique. Texts that exceed the max_sequence_length of a model will be chunked into smaller parts and aggregated by weighted mean pooling.
+Create embeddings for each technique. The models can handle only a max sequence of tokens. Texts that exceed this limit will be chunked into smaller parts and aggregated by weighted mean pooling to keep the semantic of the sentences.
 ```bash
 python3 ./embeddings/CreateEmbeddings.py --model_name all-MiniLM-L6-v2
 ```
+## Build similarity matrix
+```bash
+python3 ./embeddings/CreateSimilarityMatrix.py --file all-MiniLM-L6-v2_embeddings.csv
+```
 
-
-### Text preprocessing:
-- [ ] Chunk data for Strings that exceed 512 tokens
-- [ ] Stopword and / or links removal
-- [ ] Build average of all sentences for each technique
-### Run sentence-transformer
 
 ## Reduce dimensionality:
 - [ ] Use dimensionality reduction algorithm to reduce vector to x dimensions
-## Build similarity matrix
 ## Run cluster algorithms
 ### k-means
 ### AHC

@@ -16,6 +16,8 @@ print(f"max sequence length: {max_seq_len}")
 # Tokenizer
 tok = model.tokenizer
 
+chunked_count = 0
+
 # Chunk-Parameter relative to max_seq_len
 CHUNK = max(64, int(0.75 * max_seq_len))
 print(f"Chunk size: {CHUNK}")
@@ -44,7 +46,7 @@ def embed_document(text):
     # Number of token < max_seq_len:
     if len(ids) <= max_seq_len:
         vec = model.encode([text], normalize_embeddings=True)[0]
-        return vec
+        return vec, False
 
     # Number of token < max_seq_len: Chunks + length-weighted Mean
     chunks = chunk_by_tokens(text)
@@ -58,17 +60,23 @@ def embed_document(text):
     doc_vec = (embs * weights[:, None]).sum(axis=0) / weights.sum()
     # normalize L2
     doc_vec /= np.linalg.norm(doc_vec)
-    return doc_vec
+    return doc_vec, True
 
 print("Create embeddings:")
 doc_embeddings = []
 for text in tqdm(df["text"].tolist(), total=len(df)):
-    doc_embeddings.append(embed_document(text))
+    vec, was_chunked = embed_document(text)
+    doc_embeddings.append(vec)
+    if was_chunked:
+        chunked_count += 1
 
 doc_embeddings = np.vstack(doc_embeddings)
 
+print(f"Chunked texts: {chunked_count} / {len(df)}")
+
 embeddings_df = pd.DataFrame(doc_embeddings)
 embeddings_df.insert(0, "ID", df["ID"].values)
+embeddings_df.sort_values("ID", inplace=True)
 out_path = f"./resources/embeddings/{args.model_name}_embeddings.csv"
 embeddings_df.to_csv(out_path, index=False)
-print(f"Embeddings saved: {out_path}")
+print(f"Embeddings saved ➜ {out_path}")
