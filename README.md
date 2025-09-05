@@ -3,15 +3,14 @@
 ## Getting started
 
 ### Select a language model
-Select a sentence-transformer model from [huggingface.co](https://huggingface.co/sentence-transformers/models), e.g. 
-[sentence-transformers/ and download it by executing:
+Select a sentence-transformer model from [huggingface.co](https://huggingface.co/sentence-transformers/models) and download it by executing:
 
-|          Model | [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) | [all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) | [SentSecBERT_10k](https://huggingface.co/QCRI/SentSecBert_10k) |
-|---------------:|:---------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|:--------------------------------------------------------------:|
-|           Path |                               sentence-transformer                                |                                sentence-transformer                                 |                              QCRI                              |
-|     Dimensions |                                        768                                        |                                         384                                         |                               ?                                |
-| Max_Seq_Lenght |                                        384                                        |                                         256                                         |                               ?                                |
-|           Size |                                      120 MB                                       |                                        80 MB                                        |                               ?                                |
+|          Model | [all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) | [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) | [SentSecBERT_10k](https://huggingface.co/QCRI/SentSecBert_10k) |
+|---------------:|:-----------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------:|:--------------------------------------------------------------:|
+|           Path |                                sentence-transformer                                 |                               sentence-transformer                                |                              QCRI                              |
+|     Dimensions |                                         768                                         |                                        384                                        |                               ?                                |
+| Max_Seq_Lenght |                                         384                                         |                                        256                                        |                               ?                                |
+|           Size |                                       120 MB                                        |                                       80 MB                                       |                               ?                                |
 
 ```bash
 python3 ./models/DownloadModel.py --model_name all-MiniLM-L6-v2 --model_path sentence-transformers
@@ -25,15 +24,65 @@ python3 ./resources/ExtractData.py
 ```
 
 ## Create Embeddings
-Create embeddings for each technique. The models can handle only a max sequence of tokens. Texts that exceed this limit will be chunked into smaller parts and aggregated by weighted mean pooling to keep the semantic of the sentences.
+Create embeddings for each technique. The models can handle only a max sequence of tokens. 
+Texts that exceed this limit will be chunked into smaller parts and aggregated by weighted mean pooling 
+to keep the semantic of the sentences. The Embeddings will be saved in ./resources/embeddings/{model-name}\_{dim_size}.csv
 ```bash
 python3 ./embeddings/CreateEmbeddings.py --model_name all-MiniLM-L6-v2
 ```
 ## Build similarity matrix
+Create a matrix which lists pairwise similarities of the techniques. 
 ```bash
-python3 ./embeddings/CreateSimilarityMatrix.py --file all-MiniLM-L6-v2_embeddings.csv
+python3 ./embeddings/CreateSimilarityMatrix.py --file all-MiniLM-L6-v2_384.csv
 ```
 
+## Extract similar techniques
+Extract the techniques that exceed a given cosine similarity score (default 0.75). Technique - sub-techniques relationships will be ignored: <br>
+\>= 0.85 → Duplicates/Paraphrases (almost identical) <br>
+0.75 - 0.85 → clearly semantically similar
+
+```bash
+python3 ./embeddings/FindSimilarTechniques.py --file all-MiniLM-L6-v2_384.csv --threshold 0.9
+```
+For example: Using the all-MiniLM-L6-v2 model and setting the threshold to 0.9, 35 similar technique descriptions will be found:
+
+| TacticID  | SimilarID  | Cosine Similarity  |
+|-----------|------------|--------------------|
+| T1498     | T1499      | 0.9105383009375732 |
+| T1566     | T1598      | 0.9035376388807717 |
+| T1583.007 | T1584.007  | 0.9844308065023536 |
+| T1587.002 | T1588.003  | 0.9042584992078372 |
+| T1589.003 | T1591      | 0.9149459772306404 |
+| T1589.003 | T1591.004  | 0.922270917118881  |
+| T1590     | T1596.001  | 0.9159396636800252 |
+| T1590.001 | T1596      | 0.912517647203262  |
+| T1590.001 | T1596.002  | 0.9161022405257429 |
+| T1590.002 | T1596.001  | 0.9026267153817532 |
+| T1590.004 | T1591.001  | 0.9051158469712368 |
+| T1590.004 | T1591.002  | 0.9005931435249647 |
+| T1590.004 | T1592.004  | 0.9092774337638656 |
+| T1590.004 | T1596      | 0.9065141772572728 |
+| T1590.004 | T1596.001  | 0.9094237908646816 |
+| T1590.004 | T1596.005  | 0.90864370057196   |
+| T1591     | T1593      | 0.9223212730118456 |
+| T1591     | T1596      | 0.9162950721643308 |
+| T1591.001 | T1593      | 0.9150870529498456 |
+| T1591.002 | T1593      | 0.910255230856254  |
+| T1591.002 | T1597.002  | 0.9109264014303432 |
+| T1591.004 | T1593      | 0.9054788057680868 |
+| T1591.004 | T1597.002  | 0.9021949763964756 |
+| T1593     | T1596      | 0.9384679485867252 |
+| T1593     | T1596.002  | 0.9039214360752212 |
+| T1593     | T1596.005  | 0.9124127179267008 |
+| T1593     | T1597      | 0.923864943468214  |
+| T1593     | T1597.002  | 0.9042467510560684 |
+| T1593.002 | T1596      | 0.9361064295630496 |
+| T1593.002 | T1597      | 0.9013583983297324 |
+| T1593.002 | T1597.002  | 0.9005568335956395 |
+| T1595.001 | T1596.005  | 0.9211910012917508 |
+| T1596     | T1597      | 0.9255244640771796 |
+| T1596     | T1597.002  | 0.91173788821184   |
+| T1596.005 | T1597      | 0.9253922319098944 |
 
 ## Reduce dimensionality:
 - [ ] Use dimensionality reduction algorithm to reduce vector to x dimensions

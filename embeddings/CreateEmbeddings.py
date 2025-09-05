@@ -77,6 +77,6 @@ print(f"Chunked texts: {chunked_count} / {len(df)}")
 embeddings_df = pd.DataFrame(doc_embeddings)
 embeddings_df.insert(0, "ID", df["ID"].values)
 embeddings_df.sort_values("ID", inplace=True)
-out_path = f"./resources/embeddings/{args.model_name}_embeddings.csv"
+out_path = f"./resources/embeddings/{args.model_name}_{model.get_sentence_embedding_dimension()}.csv"
 embeddings_df.to_csv(out_path, index=False)
 print(f"Embeddings saved ➜ {out_path}")
