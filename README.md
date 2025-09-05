@@ -8,8 +8,8 @@ Select a sentence-transformer model from [huggingface.co](https://huggingface.co
 |          Model | [all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) | [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) | [SentSecBERT_10k](https://huggingface.co/QCRI/SentSecBert_10k) |
 |---------------:|:-----------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------:|:--------------------------------------------------------------:|
 |           Path |                                sentence-transformer                                 |                               sentence-transformer                                |                              QCRI                              |
-|     Dimensions |                                         768                                         |                                        384                                        |                               ?                                |
-| Max_Seq_Lenght |                                         384                                         |                                        256                                        |                               ?                                |
+|     Dimensions |                                         768                                         |                                        384                                        |                              768                               |
+| Max_Seq_Lenght |                                         384                                         |                                        256                                        |                              514                               |
 |           Size |                                       120 MB                                        |                                       80 MB                                       |                               ?                                |
 
 ```bash
@@ -85,7 +85,11 @@ For example: Using the all-MiniLM-L6-v2 model and setting the threshold to 0.9, 
 | T1596.005 | T1597      | 0.9253922319098944 |
 
 ## Reduce dimensionality:
-- [ ] Use dimensionality reduction algorithm to reduce vector to x dimensions
+```bash
+python3 ./embeddings/PrincipalComponentAnalysis.py --file all-MiniLM-L6-v2_384.csv --dimensions 30
+```
+
+
 ## Run cluster algorithms
 ### k-means
 ### AHC
