@@ -24,7 +24,7 @@ print(f"Chunk size: {CHUNK}")
 OVERLAP = max(16, int(0.15 * max_seq_len))
 print(f"Overlap size: {OVERLAP}")
 
-df = pd.read_csv("./resources/techniques.csv", encoding="utf-8")
+df = pd.read_csv("./resources/techniques_clean.csv", encoding="utf-8")
 
 def chunk_by_tokens(text, chunk_size=CHUNK, overlap=OVERLAP):
     ids = tok.encode(text, add_special_tokens=False)
@@ -64,7 +64,7 @@ def embed_document(text):
 
 print("Create embeddings:")
 doc_embeddings = []
-for text in tqdm(df["text"].tolist(), total=len(df)):
+for text in tqdm(df["text_clean"].tolist(), total=len(df)):
     vec, was_chunked = embed_document(text)
     doc_embeddings.append(vec)
     if was_chunked:

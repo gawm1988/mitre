@@ -23,6 +23,21 @@ Extract the ID, title and description, tactics from the matrix and save them as 
 python3 ./resources/ExtractData.py
 ```
 
+### Clean Data
+- Remove control character (especially \n, \t)
+- Remove line breaks
+- Remove URLs & Markdown-Links, keep link text
+- Remove HTML-Tags (\<p>, \<br>, …)
+- Remove Inline-Code-Backticks \`vim-cmd`)
+- Remove Multiple spaces/tabs
+- Trim leading/trailing spaces
+- Remove List marker (- , * , 1.)
+- Remove Non-breaking space (\u00A0)
+- Remove Markdown-Headers (# …)
+```bash
+python3 ./embeddings/PreprocessData.py
+```
+
 ## Create Embeddings
 Create embeddings for each technique. The models can handle only a max sequence of tokens. 
 Texts that exceed this limit will be chunked into smaller parts and aggregated by weighted mean pooling 
@@ -42,7 +57,7 @@ Extract the techniques that exceed a given cosine similarity score (default 0.75
 0.75 - 0.85 → clearly semantically similar
 
 ```bash
-python3 ./embeddings/FindSimilarTechniques.py --file all-MiniLM-L6-v2_384.csv --threshold 0.9
+python3 ./embeddings/FindSimilarTechniques.py --file all-MiniLM-L6-v2_384.csv --threshold 0.85
 ```
 For example: Using the all-MiniLM-L6-v2 model and setting the threshold to 0.9, 35 similar technique descriptions will be found:
 
