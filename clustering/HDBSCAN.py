@@ -2,7 +2,7 @@ import argparse
 import re
 import numpy as np
 import pandas as pd
-from sklearn.cluster import HDBSCAN
+import hdbscan
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--file', type=str, required=True)
@@ -18,7 +18,7 @@ D = 1.0 - S
 np.fill_diagonal(D, 0.0)
 
 # --- HDBSCAN (precomputed) ---
-hdb = HDBSCAN(min_cluster_size=args.min_cluster_size, metric='precomputed')
+hdb = hdbscan.HDBSCAN(min_cluster_size=args.min_cluster_size, metric='precomputed')
 labels = hdb.fit_predict(D)
 
 # Result DataFrame: Remove noise and rearrange DataFrame
@@ -39,6 +39,6 @@ hdbscan_df = hdbscan_df[~hdbscan_df["cluster"].isin(pure_clusters)].drop(columns
 
 print(f"Removed pure Technique/Subtechnique-Cluster: {len(pure_clusters)} → {pure_clusters}")
 
-out_path = f"./resources/embeddings/{args.file[:-4]}_hdbscan_{args.min_cluster_size}.csv"
+out_path = f"./resources/clustering/hdbscan_{args.file[:-4]}_{args.min_cluster_size}.csv"
 hdbscan_df.to_csv(out_path, index=False)
 print("File saved → ", out_path)

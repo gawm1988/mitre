@@ -108,7 +108,7 @@ python3 ./embeddings/PrincipalComponentAnalysis.py --file all-MiniLM-L6-v2_384.c
 ## Run cluster algorithms
 ### HDBSCAN
 ```bash
-python3 ./clustering/HDBSCAN.py --file all-MiniLM-L6-v2_384.csv --min_cluster_size 3
+python3 ./clustering/HDBSCAN.py --file all-MiniLM-L6-v2_384.csv --min_cluster_size 5
 ```
 
 ### k-means

@@ -18,7 +18,7 @@ for row_id, row in similarity_matrix_df.iterrows():
     for col_id in similarity_matrix_df.columns:
         s0 = row_id[0:5]
         s1 = col_id[0:5]
-        if s0 == s1:                        # skip selfs and sub-techniques
+        if s0 == s1:                        # skip selves and sub-techniques
             continue
         val = similarity_matrix_df.loc[row_id, col_id]
         if pd.notna(val) and val >= threshold:
