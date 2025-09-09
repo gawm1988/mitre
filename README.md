@@ -101,14 +101,18 @@ For example: Using the all-MiniLM-L6-v2 model and setting the threshold to 0.9, 
 
 ## Reduce dimensionality:
 ```bash
-python3 ./embeddings/PrincipalComponentAnalysis.py --file all-MiniLM-L6-v2_384.csv --dimensions 30
+python3 ./embeddings/PrincipalComponentAnalysis.py --file all-MiniLM-L6-v2_384.csv --dimensions 10
 ```
 
 
 ## Run cluster algorithms
+### HDBSCAN
+```bash
+python3 ./clustering/HDBSCAN.py --file all-MiniLM-L6-v2_384.csv --min_cluster_size 3
+```
+
 ### k-means
 ### AHC
-### HDBSCAN
 ### Gaussian mixture
 
 ## Evaluate cluster

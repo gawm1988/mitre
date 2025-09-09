@@ -21,4 +21,4 @@ reduced_df = pd.DataFrame(reduced_embeddings,
                           columns=columns)
 reduced_df.insert(0, "ID", ids.values)
 
-reduced_df.to_csv(f"./resources/embeddings/{args.file[:-7]}_{n_components}.csv", index=False)
+reduced_df.to_csv(f"./resources/embeddings/{args.file[:-7]}{n_components}.csv", index=False)
