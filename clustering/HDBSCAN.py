@@ -29,7 +29,7 @@ hdbscan_df = hdbscan_df.sort_values(by=["cluster", "ID"]).reset_index(drop=True)
 # --- Filter pure Technique<->SubTechnique Cluster
 def root(tid: str) -> str:
     tid = str(tid)
-    m = re.match(r'^(T\d{4})', tid)   # extrahiert z. B. "T1080" aus "T1080.001"
+    m = re.match(r'^(T\d{4})', tid)
     return m.group(1) if m else tid.split('.')[0]
 
 hdbscan_df["__root"] = hdbscan_df["ID"].map(root)
@@ -39,6 +39,6 @@ hdbscan_df = hdbscan_df[~hdbscan_df["cluster"].isin(pure_clusters)].drop(columns
 
 print(f"Removed pure Technique/Subtechnique-Cluster: {len(pure_clusters)} → {pure_clusters}")
 
-out_path = f"./resources/clustering/hdbscan_{args.file[:-4]}_{args.min_cluster_size}.csv"
+out_path = f"./resources/clustering/hdbscan_{args.file[:-4]}_min_cluster_size_{args.min_cluster_size}.csv"
 hdbscan_df.to_csv(out_path, index=False)
 print("File saved → ", out_path)
