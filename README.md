@@ -1,6 +1,11 @@
 # Semantic analysis of the MITRE ATT&CK framework through reclustering
 
 ## Getting started
+### Dependencies
+Create a [HuggingFace](https://huggingface.co/) access token and install the dependencies (pip freeze > requirements.txt)
+```bash
+pip install -r requirements.txt
+```
 
 ### Select a language model
 Select a sentence-transformer model from [huggingface.co](https://huggingface.co/sentence-transformers/models) and download it by executing:
