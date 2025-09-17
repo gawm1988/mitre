@@ -7,6 +7,7 @@ import hdbscan
 parser = argparse.ArgumentParser()
 parser.add_argument('--file', type=str, required=True)
 parser.add_argument('--min_cluster_size', type=int, default=5)
+parser.add_argument('--min_samples', type=int, default=5)
 args = parser.parse_args()
 
 S_df = pd.read_csv(f"./resources/similarity_matrix/{args.file}")
@@ -18,11 +19,12 @@ D = 1.0 - S
 np.fill_diagonal(D, 0.0)
 
 # --- HDBSCAN (precomputed) ---
-hdb = hdbscan.HDBSCAN(min_cluster_size=args.min_cluster_size, metric='precomputed')
+hdb = hdbscan.HDBSCAN(min_cluster_size=args.min_cluster_size, min_samples=args.min_samples, metric='precomputed')
 labels = hdb.fit_predict(D)
+probabilities = hdb.probabilities_
 
 # Result DataFrame: Remove noise and rearrange DataFrame
-hdbscan_df = pd.DataFrame({"ID": ids, "cluster": labels})
+hdbscan_df = pd.DataFrame({"ID": ids, "cluster": labels, "Probability":probabilities})
 hdbscan_df = hdbscan_df[hdbscan_df["cluster"] != -1].reset_index(drop=True)
 hdbscan_df = hdbscan_df.sort_values(by=["cluster", "ID"]).reset_index(drop=True)
 

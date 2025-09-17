@@ -107,8 +107,16 @@ python3 ./embeddings/PrincipalComponentAnalysis.py --file all-MiniLM-L6-v2_384.c
 
 ## Run cluster algorithms
 ### HDBSCAN
+| Advantages                                                       | Disadvantages                                               |
+|:-----------------------------------------------------------------|-------------------------------------------------------------|
+| Finds the number of clusters itself (no k required)              | Sensitive to hyperparameter (min_cluster_size, min_samples) |
+| Explicit noise, outliers ar labeled \'-1'                        | High noise proportion in high-dimensional embeddings        |
+| Works with different densities \& shapes                         |                                                             |
+| Provides membership probabilities                                |                                                             |
+| Can be run directly on precomputed distances (D = 1 - SimMatrix) |                                                             |
+
 ```bash
-python3 ./clustering/HDBSCAN.py --file all-MiniLM-L6-v2_384.csv --min_cluster_size 5
+python3 ./clustering/HDBSCAN.py --file all-MiniLM-L6-v2_384.csv --min_cluster_size 5 --min_samples 4
 ```
 
 ### k-means
