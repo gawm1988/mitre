@@ -24,7 +24,7 @@ labels = hdb.fit_predict(D)
 probabilities = hdb.probabilities_
 
 # Result DataFrame: Remove noise and rearrange DataFrame
-hdbscan_df = pd.DataFrame({"ID": ids, "cluster": labels, "Probability":probabilities})
+hdbscan_df = pd.DataFrame({"ID": ids, "cluster": labels, "probability":probabilities})
 hdbscan_df = hdbscan_df[hdbscan_df["cluster"] != -1].reset_index(drop=True)
 hdbscan_df = hdbscan_df.sort_values(by=["cluster", "ID"]).reset_index(drop=True)
 
