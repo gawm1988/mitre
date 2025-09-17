@@ -1,6 +1,11 @@
 # Semantic analysis of the MITRE ATT&CK framework through reclustering
 
 ## Getting started
+### Dependencies
+Create a [HuggingFace](https://huggingface.co/) access token and install the dependencies (pip freeze > requirements.txt)
+```bash
+pip install -r requirements.txt
+```
 
 ### Select a language model
 Select a sentence-transformer model from [huggingface.co](https://huggingface.co/sentence-transformers/models) and download it by executing:
@@ -16,11 +21,11 @@ Select a sentence-transformer model from [huggingface.co](https://huggingface.co
 python3 ./models/DownloadModel.py --model_name all-MiniLM-L6-v2 --model_path sentence-transformers
 ```
 
-### Extract data from MITRE ATT&CK matrix
+### Read data from MITRE ATT&CK matrix
 Download latest version (v17) of the ATT&CK matrix (.xlsx) from [MITRE](https://attack.mitre.org/resources/attack-data-and-tools/).
-Extract the ID, title and description, tactics from the matrix and save them as a new list techniques.csv:
+Read the ID, title and description, tactics from the matrix and save them as a new list techniques.csv:
 ```bash
-python3 ./resources/ExtractData.py
+python3 ./resources/ReadTechniques.py
 ```
 
 ### Clean Data
@@ -51,8 +56,8 @@ Create a matrix which lists pairwise similarities of the techniques.
 python3 ./embeddings/CreateSimilarityMatrix.py --file all-MiniLM-L6-v2_384.csv
 ```
 
-## Extract similar techniques
-Extract the techniques that exceed a given cosine similarity score (default 0.75). Technique - sub-techniques relationships will be ignored: <br>
+## Read similar techniques
+Read the techniques that exceed a given cosine similarity score (default 0.75). Technique - sub-techniques relationships will be ignored: <br>
 \>= 0.85 → Duplicates/Paraphrases (almost identical) <br>
 0.75 - 0.85 → clearly semantically similar
 
@@ -99,11 +104,11 @@ For example: Using the all-MiniLM-L6-v2 model and setting the threshold to 0.9, 
 | T1596     | T1597.002  | 0.91173788821184   |
 | T1596.005 | T1597      | 0.9253922319098944 |
 
-## Reduce dimensionality:
+## Reduce dimensionality
+Reduce dim space before clustering if necessary
 ```bash
 python3 ./embeddings/PrincipalComponentAnalysis.py --file all-MiniLM-L6-v2_384.csv --dimensions 10
 ```
-
 
 ## Run cluster algorithms
 ### HDBSCAN
@@ -124,6 +129,13 @@ python3 ./clustering/HDBSCAN.py --file all-MiniLM-L6-v2_384.csv --min_cluster_si
 ### Gaussian mixture
 
 ## Evaluate cluster
+### Read Cluster
+```bash
+python3 ./clustering/ReadCluster.py --file hdbscan_all-MiniLM-L6-v2_384_min_cluster_size_5.csv
+
+```
+
+
 ### External metric 
 - [ ] to compare to ground truth
 ### internal metric 
