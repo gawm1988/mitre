@@ -127,7 +127,7 @@ python3 ./clustering/HDBSCAN.py --file all-MiniLM-L6-v2_384.csv --min_cluster_si
 ### Agglomerative Clustering
 
 ```bash
-python3 ./clustering/AgglomerativeClustering.py --file all-MiniLM-L6-v2_384.csv --threshold 0.25 --linkage average
+python3 ./clustering/AgglomerativeClustering.py --file all-MiniLM-L6-v2_384.csv --threshold 0.2 --linkage average
 ```
 
 
@@ -138,7 +138,7 @@ python3 ./clustering/AgglomerativeClustering.py --file all-MiniLM-L6-v2_384.csv 
 ### Read Cluster
 ```bash
 python3 ./clustering/ReadCluster.py --file hdbscan_all-MiniLM-L6-v2_384_min_cluster_size_5.csv
-python3 ./clustering/ReadCluster.py --file agc_all-MiniLM-L6-v2_384_threshold_0.25.csv
+python3 ./clustering/ReadCluster.py --file agc_all-MiniLM-L6-v2_384_threshold_0.2.csv
 
 
 ```

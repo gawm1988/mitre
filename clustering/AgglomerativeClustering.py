@@ -10,23 +10,20 @@ parser.add_argument('--threshold', type=float, default=0.25)
 parser.add_argument('--linkage', type=str, default='average')
 args = parser.parse_args()
 
-S_df = pd.read_csv(f"./resources/similarity_matrix/{args.file}")
-ids = S_df["ID"].astype(str)
-S = S_df.drop(columns=["ID"], errors="ignore").apply(pd.to_numeric, errors="coerce").to_numpy(float)
+embeddings_df = pd.read_csv(f"./resources/embeddings/{args.file}")
 
-# --- Similarity -> Distance ---
-D = 1.0 - S
-np.fill_diagonal(D, 0.0)
+ids = embeddings_df["ID"].astype(str)
+embeddings_df = embeddings_df.drop(columns=["ID"])
 
 agc = AgglomerativeClustering(
     n_clusters=None,
-    metric="precomputed",
+    metric="cosine",
     linkage=args.linkage,
     distance_threshold=args.threshold   # threshold = 1 - similarity
 )
-agc.fit(D)
-labels = agc.labels_
 
+agc.fit(embeddings_df)
+labels = agc.labels_
 
 # Result DataFrame: Remove noise and rearrange DataFrame
 agc_df = pd.DataFrame({"ID": ids, "cluster": labels})
