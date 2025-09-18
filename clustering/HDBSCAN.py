@@ -7,7 +7,7 @@ import hdbscan
 parser = argparse.ArgumentParser()
 parser.add_argument('--file', type=str, required=True)
 parser.add_argument('--min_cluster_size', type=int, default=5)
-parser.add_argument('--min_samples', type=int, default=5)
+parser.add_argument('--min_samples', type=int, default=2)
 args = parser.parse_args()
 
 S_df = pd.read_csv(f"./resources/similarity_matrix/{args.file}")

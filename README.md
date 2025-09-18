@@ -121,17 +121,25 @@ python3 ./embeddings/PrincipalComponentAnalysis.py --file all-MiniLM-L6-v2_384.c
 | Can be run directly on precomputed distances (D = 1 - SimMatrix) |                                                             |
 
 ```bash
-python3 ./clustering/HDBSCAN.py --file all-MiniLM-L6-v2_384.csv --min_cluster_size 5 --min_samples 4
+python3 ./clustering/HDBSCAN.py --file all-MiniLM-L6-v2_384.csv --min_cluster_size 5 --min_samples 2
 ```
 
+### Agglomerative Clustering
+
+```bash
+python3 ./clustering/AgglomerativeClustering.py --file all-MiniLM-L6-v2_384.csv --threshold 0.25 --linkage average
+```
+
+
 ### k-means
-### AHC
 ### Gaussian mixture
 
 ## Evaluate cluster
 ### Read Cluster
 ```bash
 python3 ./clustering/ReadCluster.py --file hdbscan_all-MiniLM-L6-v2_384_min_cluster_size_5.csv
+python3 ./clustering/ReadCluster.py --file agc_all-MiniLM-L6-v2_384_threshold_0.25.csv
+
 
 ```
 
