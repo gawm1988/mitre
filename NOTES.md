@@ -1,3 +1,8 @@
+# Evaluation
+## Verben
+- [ ] Konzentration auf die Verben.
+- [ ] Synonyme per API abfragen? [https://dictionaryapi.dev/](https://dictionaryapi.dev/)
+
 # Diskussion Proposal
 ## Max_token limit
 ### Anzahl an Techniken die das Limit überschreiten
