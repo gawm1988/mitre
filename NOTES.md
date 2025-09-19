@@ -2,6 +2,7 @@
 ## Verben
 - [ ] Konzentration auf die Verben.
 - [ ] Synonyme per API abfragen? [https://dictionaryapi.dev/](https://dictionaryapi.dev/)
+- [ ] mögliche Quellen:  Dürscheid: Syntax (gut lesbar), Eisenberg: Grundriss der deutschen Grammatik. Band 2. Der Satz (wissenschaftlich anerkannt), die Grammatik aus dem Duden-Verlag, Elektronisches Valenzwörterbuch  des Deutschen: E valbu, angesiedelt beim Institut für deutsche Sprache (IDS) in Mannheim
 
 # Diskussion Proposal
 ## Max_token limit

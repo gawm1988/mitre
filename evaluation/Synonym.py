@@ -1,18 +1,26 @@
+import pandas as pd
 import requests
 
 class Synonym:
     def __init__(self, data):
         self.word = data[0]['word']
-        self.definitions = data[0]['meanings'][1]['definitions']
+        self.meanings = data[0]['meanings']
 
     def get_synonyms(self):
+        definitions = []
         synonyms = []
-        for i in self.definitions:
-            synonyms.append(f"definition: \'{i['definition']}\', synonyms: {i['synonyms']}")
-        return synonyms
+        for meaning in self.meanings:
+            partOfSpeech = meaning["partOfSpeech"]
+            if partOfSpeech != "verb":
+                continue
+            for definition in meaning["definitions"]:
+                definitions.append(definition['definition'])
+                synonyms.append(definition['synonyms'])
+        return definitions, synonyms
 
     def __str__(self):
-        return f"word: {self.word}\n{self.get_synonyms()}"
+        definitions, synonyms = self.get_synonyms()
+        return f"word: {self.word}\ndefinitions: {definitions}\nsynonyms: {synonyms}"
 
 base_url = "https://api.dictionaryapi.dev/api/v2/entries/en/"
 
@@ -25,8 +33,11 @@ def get_synonyms(word:str):
         print(f"No data retrieved for {word} - {response.status_code}")
         return None
 
-verb = "exploit"
-verb_info = get_synonyms(verb)
-if verb_info:
-    synonym = Synonym(verb_info)
-    print(synonym)
+verbs = ['circumvent', 'design', 'control', 'gain', 'contain', 'intend', 'limit', 'perform', 'have', 'grant', 'perform', 'consider', 'page', 'perform', 'take', 'build', 'escalate']
+
+for verb in verbs:
+    verb_info = get_synonyms(verb)
+    if verb_info:
+        synonym = Synonym(verb_info)
+        definitions, synonyms = synonym.get_synonyms()
+        print(f"verb: {verb}\ndefintions: {definitions}\nsynonyms: {synonyms}\n")
