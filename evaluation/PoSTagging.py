@@ -1,20 +1,54 @@
 # https://spacy.io/usage/linguistic-features#pos-tagging
+import pandas as pd
 import spacy
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--file', type=str, required=True)
+args = parser.parse_args()
+
+techniques_df = pd.read_csv(f"./resources/clustering/{args.file}")
+
+descriptions = techniques_df["description"]
+result_verbs = []
+result_nouns = []
+result_proper_nouns = []
+result_unknown = []
+result_aux = []
 nlp = spacy.load("en_core_web_sm")
 
-text = "Abuse Elevation Control Mechanism: Adversaries may circumvent mechanisms designed to control elevate privileges to gain higher-level permissions. Most modern systems contain native elevation control mechanisms that are intended to limit privileges that a user can perform on a machine. Authorization has to be granted to specific users in order to perform tasks that can be considered of higher risk.(Citation: TechNet How UAC Works)(Citation: sudo man page 2018) An adversary can perform several methods to take advantage of built-in control mechanisms in order to escalate privileges on a system.(Citation: OSX Keydnap malware)(Citation: Fortinet Fareit)"
+for d in descriptions:
+    verbs = []
+    proper_nouns = []
+    nouns = []
+    aux = []
+    unknown = []
+    doc = nlp(d)
+    for token in doc:
+        pos = token.pos_
+        if pos == "VERB":
+            verbs.append(token.lemma_)
+        if pos == "PROPN":
+            proper_nouns.append(token.lemma_)
+        if pos == "NOUN":
+            nouns.append(token.lemma_)
+        if pos == "AUX":
+            aux.append(token.lemma_)
+        if pos == "X":
+            unknown.append(token.lemma_)
+    result_verbs.append(verbs)
+    result_nouns.append(nouns)
+    result_proper_nouns.append(proper_nouns)
+    result_unknown.append(unknown)
+    result_aux.append(aux)
 
-doc =  nlp(text)
 
-#for token in doc:
- #   print(token, token.pos_, token.lemma_)
+techniques_df["verbs"] = result_verbs
+techniques_df["proper_nouns"] = result_proper_nouns
+techniques_df["nouns"] = result_nouns
+techniques_df["unknown"] = result_unknown
+techniques_df["aux"] = result_aux
 
-verbs = []
-for token in doc:
-    if token.pos_ == "VERB":
-        verbs.append(token.lemma_)
+print(techniques_df)
 
-nouns = []
-
-print(verbs)
+techniques_df.to_csv(f"./resources/evaluation/{args.file}")

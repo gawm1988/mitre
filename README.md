@@ -139,10 +139,13 @@ python3 ./clustering/AgglomerativeClustering.py --file all-MiniLM-L6-v2_384.csv 
 ```bash
 python3 ./clustering/ReadCluster.py --file hdbscan_all-MiniLM-L6-v2_384_min_cluster_size_5.csv
 python3 ./clustering/ReadCluster.py --file agc_all-MiniLM-L6-v2_384_threshold_0.2.csv
-
-
 ```
 
+### Part of Speech Tagging
+Filter verbs, proper_nouns, nouns, unknown words and auxiliary verbs
+```bash
+python3 ./evaluation/PoSTagging.py --file results_agc_all-MiniLM-L6-v2_384_threshold_0.2.csv
+```
 
 ### External metric 
 - [ ] to compare to ground truth
