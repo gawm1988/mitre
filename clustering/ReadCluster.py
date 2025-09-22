@@ -2,56 +2,60 @@ import argparse
 import pandas as pd
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--model_name', type=str, required=True)
 parser.add_argument('--file', type=str, required=True)
 args = parser.parse_args()
 
-cluster_df = pd.read_csv(f"./resources/clustering/{args.file}")
-max_cluster = cluster_df["cluster"].iloc[-1]
-has_probability = (lambda cluster_df: True if 'probability' in cluster_df.columns else False)(cluster_df)
+in_csv = f"./resources/{args.model_name}/clustering/{args.file}"
+tech_csv = "./resources/techniques_clean_pos.csv"
+txt_out = f"./resources/{args.model_name}/clustering/{args.file[:-4]}_cluster.txt"
+csv_out = f"./resources/{args.model_name}/clustering/{args.file[:-4]}_clusters.csv"
 
-techniques_df = pd.read_csv(f"./resources/techniques_clean.csv", index_col="ID")
-result_list = []
-result_file = f"./resources/clustering/{args.file[:-4]}.txt"
+cluster_df = pd.read_csv(in_csv)
+techniques_df = pd.read_csv(tech_csv, index_col="ID")
 
-with open(result_file, "w") as file:
-    file.write(f"{args.file} \n\n")
+has_probability = 'probability' in cluster_df.columns
+if not has_probability:
+    cluster_df['probability'] = pd.NA
 
-result_ids = []
-result_clusters = []
-result_probabilities = []
-result_descriptions = []
+df = cluster_df.merge(
+    techniques_df,
+    left_on='ID', right_index=True,
+    how='left'
+)
 
-for j in range(max_cluster+1):
-    cluster_list = []
-    text = ""
-    for i, row in cluster_df.iterrows():
-        if row["cluster"] == j:
-            cluster_list.append(row["ID"])
-            result_ids.append(row["ID"])
-            result_clusters.append(row["cluster"])
-            result_descriptions.append(techniques_df.loc[row["ID"], "text_clean"])
-            if (has_probability):
-                text = f"{text}{row["ID"]} ({row["probability"]}): {techniques_df.loc[row["ID"], "text_clean"]} \n"
-                result_probabilities.append(row["probability"])
-            else:
-                text = f"{text}{row["ID"]}: {techniques_df.loc[row["ID"], "text_clean"]} \n"
-                result_probabilities.append("na")
-    if cluster_list.__len__() == 1:
-        result_ids.pop()
-        result_clusters.pop()
-        result_descriptions.pop()
-        result_probabilities.pop()
-    else:
-        result_list.append({"cluster": j, "IDs": cluster_list})
-        with open(result_file, "a") as file:
-            file.write(f"Cluster {j} [ID (probability): description]\n{text}\n")
+df = df.sort_values(['cluster', 'ID']).reset_index(drop=True)
 
-result = {'id': result_ids, 'cluster': result_clusters, 'probabilitiy': result_probabilities, 'description': result_descriptions}
-result_df = pd.DataFrame(result)
+valid_clusters = df.groupby('cluster').size()
+valid_clusters = valid_clusters[valid_clusters > 1].index
+df_valid = df[df['cluster'].isin(valid_clusters)].copy()
 
-output_path = f"./resources/clustering/results_{args.file}"
-result_df.to_csv(output_path)
+result_df = (
+    df_valid[['ID', 'cluster', 'probability', 'text', 'VERB', 'ADV', 'PROPN', 'NOUN', 'X']]
+)
 
-print(result_df)
+result_df['probability'] = result_df['probability'].astype(object).where(result_df['probability'].notna(), 'na')
 
-result_df.to_csv(f"./resources/clustering/{args.file[:-4]}_clusters.csv", index=False)
+result_df.to_csv(csv_out, index=False, encoding="utf-8")
+
+
+# Save txt
+lines = [f"{args.file}\n"]  # Header
+
+def _fmt_row(row):
+    return f"{row['id']} ({row['probability']}): {row['description']}"
+
+for clus, grp in df_valid.groupby('cluster', sort=True):
+    body = "\n".join(_fmt_row(r) for _, r in grp.rename(columns={'ID':'id','text':'description'}).iterrows())
+    lines.append(f"Cluster {clus} [ID (probability): description]\n{body}\n")
+
+with open(txt_out, "w", encoding="utf-8") as f:
+    f.write("\n".join(lines))
+
+result_list = (
+    df_valid.groupby('cluster')['ID']
+    .apply(list)
+    .reset_index()
+    .rename(columns={'ID': 'IDs'})
+    .to_dict('records')
+)

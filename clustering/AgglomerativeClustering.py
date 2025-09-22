@@ -5,12 +5,13 @@ import pandas as pd
 from sklearn.cluster import AgglomerativeClustering
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--file', type=str, required=True)
+parser.add_argument('--model_name', type=str, required=True)
+parser.add_argument('--dimensions', type=int, required=True)
 parser.add_argument('--threshold', type=float, default=0.25)
 parser.add_argument('--linkage', type=str, default='average')
 args = parser.parse_args()
 
-embeddings_df = pd.read_csv(f"./resources/embeddings/{args.file}")
+embeddings_df = pd.read_csv(f"./resources/{args.model_name}/embeddings/{args.dimensions}.csv")
 
 ids = embeddings_df["ID"].astype(str)
 embeddings_df = embeddings_df.drop(columns=["ID"])
@@ -43,6 +44,6 @@ agc_df = agc_df[~agc_df["cluster"].isin(pure_clusters)].drop(columns="__root")
 
 print(f"Removed pure Technique/Subtechnique-Cluster: {len(pure_clusters)} → {pure_clusters}")
 
-out_path = f"./resources/clustering/agc_{args.file[:-4]}_threshold_{args.threshold}.csv"
+out_path = f"./resources/{args.model_name}/clustering/agc_{args.dimensions}_{args.threshold}_{args.linkage}.csv"
 agc_df.to_csv(out_path, index=False)
 print("File saved → ", out_path)

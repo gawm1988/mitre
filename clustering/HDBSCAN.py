@@ -5,12 +5,13 @@ import pandas as pd
 import hdbscan
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--file', type=str, required=True)
+parser.add_argument('--model_name', type=str, required=True)
+parser.add_argument('--dimensions', type=int, required=True)
 parser.add_argument('--min_cluster_size', type=int, default=5)
 parser.add_argument('--min_samples', type=int, default=2)
 args = parser.parse_args()
 
-S_df = pd.read_csv(f"./resources/similarity_matrix/{args.file}")
+S_df = pd.read_csv(f"./resources/{args.model_name}/similarity/sim_matrix_{args.dimensions}.csv")
 ids = S_df["ID"].astype(str)
 S = S_df.drop(columns=["ID"], errors="ignore").apply(pd.to_numeric, errors="coerce").to_numpy(float)
 
@@ -41,6 +42,6 @@ hdbscan_df = hdbscan_df[~hdbscan_df["cluster"].isin(pure_clusters)].drop(columns
 
 print(f"Removed pure Technique/Subtechnique-Cluster: {len(pure_clusters)} → {pure_clusters}")
 
-out_path = f"./resources/clustering/hdbscan_{args.file[:-4]}_min_cluster_size_{args.min_cluster_size}.csv"
+out_path = f"./resources/{args.model_name}/clustering/hdbscan_{args.dimensions}_{args.min_cluster_size}_{args.min_samples}.csv"
 hdbscan_df.to_csv(out_path, index=False)
 print("File saved → ", out_path)

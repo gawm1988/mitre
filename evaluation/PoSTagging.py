@@ -1,54 +1,35 @@
-# https://spacy.io/usage/linguistic-features#pos-tagging
 import pandas as pd
 import spacy
 import argparse
+from tqdm import tqdm
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--file', type=str, required=True)
 args = parser.parse_args()
 
-techniques_df = pd.read_csv(f"./resources/clustering/{args.file}")
+techniques_df = pd.read_csv(f"./resources/{args.file}")
 
-descriptions = techniques_df["description"]
-result_verbs = []
-result_nouns = []
-result_proper_nouns = []
-result_unknown = []
-result_aux = []
+descriptions = techniques_df["text"]
+
+
 nlp = spacy.load("en_core_web_sm")
 
-for d in descriptions:
-    verbs = []
-    proper_nouns = []
-    nouns = []
-    aux = []
-    unknown = []
+pos_map = ["VERB", "ADV", "AUX", "PROPN", "NOUN", "X"]
+results = []
+
+for d in tqdm(descriptions, desc="Filter part of speech"):
     doc = nlp(d)
+    current = {pos: [] for pos in pos_map}
     for token in doc:
-        pos = token.pos_
-        if pos == "VERB":
-            verbs.append(token.lemma_)
-        if pos == "PROPN":
-            proper_nouns.append(token.lemma_)
-        if pos == "NOUN":
-            nouns.append(token.lemma_)
-        if pos == "AUX":
-            aux.append(token.lemma_)
-        if pos == "X":
-            unknown.append(token.lemma_)
-    result_verbs.append(verbs)
-    result_nouns.append(nouns)
-    result_proper_nouns.append(proper_nouns)
-    result_unknown.append(unknown)
-    result_aux.append(aux)
+        if token.pos_ in current:
+            current[token.pos_].append(token.lemma_)
+    for pos in current:
+        current[pos].sort()     # sort alphabetically
+    results.append(current)
 
+pos_df = pd.DataFrame(results)
+techniques_df = pd.concat([techniques_df, pos_df], axis=1)
 
-techniques_df["verbs"] = result_verbs
-techniques_df["proper_nouns"] = result_proper_nouns
-techniques_df["nouns"] = result_nouns
-techniques_df["unknown"] = result_unknown
-techniques_df["aux"] = result_aux
-
-print(techniques_df)
-
-techniques_df.to_csv(f"./resources/evaluation/{args.file}")
+out_path = f"./resources/{args.file[:-4]}_pos.csv"
+techniques_df.to_csv(out_path, index=False)
+print(f"File saved → {out_path}")

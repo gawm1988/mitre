@@ -25,7 +25,7 @@ python3 ./models/DownloadModel.py --model_name all-MiniLM-L6-v2 --model_path sen
 Download latest version (v17) of the ATT&CK matrix (.xlsx) from [MITRE](https://attack.mitre.org/resources/attack-data-and-tools/).
 Read the ID, title and description, tactics from the matrix and save them as a new list techniques.csv:
 ```bash
-python3 ./resources/ReadTechniques.py
+python3 ./embeddings/preprocessing/ReadTechniques.py --file enterprise-attack-v17.1.xlsx
 ```
 
 ### Clean Data
@@ -40,10 +40,16 @@ python3 ./resources/ReadTechniques.py
 - Remove Non-breaking space (\u00A0)
 - Remove Markdown-Headers (# …)
 ```bash
-python3 ./embeddings/PreprocessData.py
+python3 ./embeddings/preprocessing/CleanData.py --file techniques.csv
 ```
 
-## Create Embeddings
+## Create numerical representations
+### Count number of token
+```bash
+python3 ./embeddings/CountToken.py --file techniques_clean.csv --model_name all-MiniLM-L6-v2
+```
+
+### Create Embeddings
 Create embeddings for each technique. The models can handle only a max sequence of tokens. 
 Texts that exceed this limit will be chunked into smaller parts and aggregated by weighted mean pooling 
 to keep the semantic of the sentences. The Embeddings will be saved in ./resources/embeddings/{model-name}\_{dim_size}.csv
@@ -53,7 +59,7 @@ python3 ./embeddings/CreateEmbeddings.py --model_name all-MiniLM-L6-v2
 ## Build similarity matrix
 Create a matrix which lists pairwise similarities of the techniques. 
 ```bash
-python3 ./embeddings/CreateSimilarityMatrix.py --file all-MiniLM-L6-v2_384.csv
+python3 ./embeddings/CreateSimilarityMatrix.py --model_name all-MiniLM-L6-v2 --dimensions 384
 ```
 
 ## Read similar techniques
@@ -62,7 +68,7 @@ Read the techniques that exceed a given cosine similarity score (default 0.75). 
 0.75 - 0.85 → clearly semantically similar
 
 ```bash
-python3 ./embeddings/FindSimilarTechniques.py --file all-MiniLM-L6-v2_384.csv --threshold 0.85
+python3 ./embeddings/ReadSimilarTechniques.py --model_name all-MiniLM-L6-v2 --dimensions 384 --threshold 0.85
 ```
 For example: Using the all-MiniLM-L6-v2 model and setting the threshold to 0.9, 35 similar technique descriptions will be found:
 
@@ -107,7 +113,7 @@ For example: Using the all-MiniLM-L6-v2 model and setting the threshold to 0.9, 
 ## Reduce dimensionality
 Reduce dim space before clustering if necessary
 ```bash
-python3 ./embeddings/PrincipalComponentAnalysis.py --file all-MiniLM-L6-v2_384.csv --dimensions 10
+python3 ./embeddings/PrincipalComponentAnalysis.py --model_name all-MiniLM-L6-v2 --old_dimensions 384 --new_dimensions 10
 ```
 
 ## Run cluster algorithms
@@ -121,13 +127,13 @@ python3 ./embeddings/PrincipalComponentAnalysis.py --file all-MiniLM-L6-v2_384.c
 | Can be run directly on precomputed distances (D = 1 - SimMatrix) |                                                             |
 
 ```bash
-python3 ./clustering/HDBSCAN.py --file all-MiniLM-L6-v2_384.csv --min_cluster_size 5 --min_samples 2
+python3 ./clustering/HDBSCAN.py --model_name all-MiniLM-L6-v2 --dimensions 384 --min_cluster_size 5 --min_samples 2
 ```
 
 ### Agglomerative Clustering
 
 ```bash
-python3 ./clustering/AgglomerativeClustering.py --file all-MiniLM-L6-v2_384.csv --threshold 0.2 --linkage average
+python3 ./clustering/AgglomerativeClustering.py --model_name all-MiniLM-L6-v2 --dimensions 384 --threshold 0.2 --linkage average
 ```
 
 
@@ -135,17 +141,19 @@ python3 ./clustering/AgglomerativeClustering.py --file all-MiniLM-L6-v2_384.csv 
 ### Gaussian mixture
 
 ## Evaluate cluster
-### Read Cluster
+### Part of Speech Tagging
+Use [spaCy](https://spacy.io/usage/linguistic-features#pos-tagging) part of speech tagging to get lists of  verbs, adverbs, auxiliary verbs, proper_nouns, nouns and unknown words in alphabetically order
 ```bash
-python3 ./clustering/ReadCluster.py --file hdbscan_all-MiniLM-L6-v2_384_min_cluster_size_5.csv
-python3 ./clustering/ReadCluster.py --file agc_all-MiniLM-L6-v2_384_threshold_0.2.csv
+python3 ./evaluation/PoSTagging.py --file techniques_clean.csv
 ```
 
-### Part of Speech Tagging
-Filter verbs, proper_nouns, nouns, unknown words and auxiliary verbs
+### Read Cluster
 ```bash
-python3 ./evaluation/PoSTagging.py --file results_agc_all-MiniLM-L6-v2_384_threshold_0.2.csv
+python3 ./clustering/ReadCluster.py --model_name all-MiniLM-L6-v2 --file agc_384_0.2_average.csv
+python3 ./clustering/ReadCluster.py --model_name all-MiniLM-L6-v2 --file hdbscan_384_5_2.csv
 ```
+
+
 
 ### External metric 
 - [ ] to compare to ground truth

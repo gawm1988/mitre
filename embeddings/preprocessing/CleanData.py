@@ -1,6 +1,11 @@
 import pandas as pd, re, unicodedata, html
+import argparse
 
-src = "./resources/techniques.csv"
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument("--file", type=str, help="Path to data file")
+args = arg_parser.parse_args()
+
+src = f"./resources/{args.file}"
 df = None
 last_err = None
 for enc in ["utf-8", "utf-8-sig", "latin-1"]:
@@ -78,8 +83,8 @@ clean_nl = orig_series.apply(lambda s: clean_text(s, keep_newlines=True))
 clean_compact = orig_series.apply(lambda s: clean_text(s, keep_newlines=False))
 
 # Attach as new columns (keep original intact)
-df["text_clean_nl"] = clean_nl
-df["text_clean"] = clean_compact
+#df["text_clean_nl"] = clean_nl
+df["text"] = clean_compact
 
 # ---------- Simple before/after summary ----------
 def has_pattern(s, rgx):
@@ -131,7 +136,7 @@ summary_df = pd.DataFrame(summary_rows).sort_values(["after_count","before_count
 print(summary_df)
 
 # ---------- Save result ----------
-out_path = "./resources/techniques_clean.csv"
+out_path = f"./resources/{args.file[:-4]}_clean.csv"
 df.to_csv(out_path, index=False, encoding="utf-8")
 
 print(f"Cleaning done, file saved → {out_path}")

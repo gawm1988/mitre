@@ -1,6 +1,10 @@
 from pathlib import Path
 import pandas as pd
+import argparse
 
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument("--file", required=True, type=Path)
+args = arg_parser.parse_args()
 
 def build_csv(xlsx_path: Path, sheet: str, out_csv: Path) -> None:
 
@@ -46,14 +50,12 @@ def build_csv(xlsx_path: Path, sheet: str, out_csv: Path) -> None:
     columns_to_export = (["ID", "text", "tactic_ids"] )
                          # + list(INDEX_TO_TACTIC.values()))    #uncomment line for adding one-hot encoding
     df[columns_to_export].to_csv(out_csv, index=False, encoding="utf-8")
-    df.to_pickle(out_csv.with_suffix(".pkl"))
-
     print(f"{len(df):,} entries exported → {out_csv}")
 
 
 
 def main() -> None:
-    xlsx_path = Path("./resources/enterprise-attack-v17.1.xlsx")
+    xlsx_path = Path(f"./resources/{args.file}")
     sheet = "techniques"
     out_csv = Path("./resources/techniques.csv")
 

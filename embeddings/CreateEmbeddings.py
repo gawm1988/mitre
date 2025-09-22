@@ -64,7 +64,7 @@ def embed_document(text):
 
 print("Create embeddings:")
 doc_embeddings = []
-for text in tqdm(df["text_clean"].tolist(), total=len(df)):
+for text in tqdm(df["text"].tolist(), total=len(df)):
     vec, was_chunked = embed_document(text)
     doc_embeddings.append(vec)
     if was_chunked:
@@ -77,6 +77,6 @@ print(f"Chunked texts: {chunked_count} / {len(df)}")
 embeddings_df = pd.DataFrame(doc_embeddings)
 embeddings_df.insert(0, "ID", df["ID"].values)
 embeddings_df.sort_values("ID", inplace=True)
-out_path = f"./resources/embeddings/{args.model_name}_{model.get_sentence_embedding_dimension()}.csv"
+out_path = f"./resources/{args.model_name}/embeddings/{model.get_sentence_embedding_dimension()}.csv"
 embeddings_df.to_csv(out_path, index=False)
 print(f"Embeddings saved ➜ {out_path}")

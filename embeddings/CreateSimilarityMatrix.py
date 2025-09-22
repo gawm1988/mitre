@@ -4,10 +4,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--file', type=str, required=True)
+parser.add_argument('--model_name', type=str, required=True)
+parser.add_argument('--dimensions', type=int, required=True)
 args = parser.parse_args()
 
-embeddings_df = pd.read_csv(f"./resources/embeddings/{args.file}")
+embeddings_df = pd.read_csv(f"./resources/{args.model_name}/embeddings/{args.dimensions}.csv")
 
 ids = embeddings_df["ID"].astype(str)
 embeddings_df = embeddings_df.drop(columns=["ID"])
@@ -20,7 +21,7 @@ similarity_df = pd.DataFrame(
     columns=ids
 )
 
-output_path = f"./resources/similarity_matrix/{args.file}"
+output_path = f"./resources/{args.model_name}/similarity/sim_matrix_{args.dimensions}.csv"
 similarity_df.to_csv(output_path)
 
 print(f"Similarity-matrix saved ➜ {output_path}")
