@@ -4,6 +4,29 @@
 - [ ] Synonyme per API abfragen? [https://dictionaryapi.dev/](https://dictionaryapi.dev/)
 - [ ] mögliche Quellen:  Dürscheid: Syntax (gut lesbar), Eisenberg: Grundriss der deutschen Grammatik. Band 2. Der Satz (wissenschaftlich anerkannt), die Grammatik aus dem Duden-Verlag, Elektronisches Valenzwörterbuch  des Deutschen: E valbu, angesiedelt beim Institut für deutsche Sprache (IDS) in Mannheim
 
+## PoS Tagging
+| POS-Tag | Beschreibung                                         | Beispiel                         |
+| ------- | ---------------------------------------------------- | -------------------------------- |
+| `ADJ`   | **Adjektiv** – beschreibt Eigenschaften              | *schnell*, *beautiful*           |
+| `ADP`   | **Adposition** – Präposition oder Postposition       | *in*, *auf*, *under*, *with*     |
+| `ADV`   | **Adverb** – beschreibt ein Verb oder anderes Adverb | *schnell*, *very*, *oft*         |
+| `AUX`   | **Hilfsverb**                                        | *haben*, *sein*, *do*, *is*      |
+| `CCONJ` | **Koordinierende Konjunktion**                       | *und*, *aber*, *or*, *and*       |
+| `DET`   | **Determiner / Artikel**                             | *der*, *die*, *the*, *some*      |
+| `INTJ`  | **Interjektion / Ausruf**                            | *oh*, *ah*, *wow*, *hey*         |
+| `NOUN`  | **Substantiv** – gewöhnliche Nomen                   | *Haus*, *dog*, *book*            |
+| `NUM`   | **Zahl**                                             | *zwei*, *100*, *first*, *drei*   |
+| `PART`  | **Partikel** – grammatikalische Marker               | *nicht*, *to*, *zu*              |
+| `PRON`  | **Pronomen**                                         | *ich*, *du*, *he*, *sie*, *wir*  |
+| `PROPN` | **Eigenname**                                        | *Berlin*, *John*, *Mercedes*     |
+| `PUNCT` | **Satzzeichen**                                      | `.` `,` `!` `?`                  |
+| `SCONJ` | **Subordinierende Konjunktion**                      | *weil*, *dass*, *if*, *although* |
+| `SYM`   | **Symbol**                                           | `+` `#` `%`                      |
+| `VERB`  | **Vollverb**                                         | *gehen*, *run*, *schreiben*      |
+| `X`     | **Unbekannt oder andere Klasse**                     | selten, z. B. bei Fehlern        |
+| `SPACE` | **Leerzeichen** (nicht sichtbar)                     | `" "` (wird manchmal ignoriert)  |
+
+
 # Diskussion Proposal
 ## Max_token limit
 ### Anzahl an Techniken die das Limit überschreiten

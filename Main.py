@@ -6,13 +6,10 @@ def main():
     model_path = "sentence-transformers"
     dimensions = "768"
     attack_file = "enterprise-attack-v17.1.xlsx"
+    text_preprocessing = False
     # =======================
 
-    commands = [
-        # 1) Download model
-        ["python3", "./models/DownloadModel.py",
-         "--model_name", model_name, "--model_path", model_path],
-
+    commands_preprocessing =  [
         # 2) Read techniques from ATT&CK matrix
         ["python3", "./embeddings/preprocessing/ReadTechniques.py",
          "--file", attack_file],
@@ -20,6 +17,16 @@ def main():
         # 3) Clean data
         ["python3", "./embeddings/preprocessing/CleanData.py",
          "--file", "techniques.csv"],
+
+        # 11) POS Tagging
+        ["python3", "./evaluation/PoSTagging.py",
+         "--file", "techniques_clean.csv"],
+]
+
+    commands = [
+        # 1) Download model
+        ["python3", "./models/DownloadModel.py",
+         "--model_name", model_name, "--model_path", model_path],
 
         # 4) Count tokens
         ["python3", "./embeddings/CountToken.py",
@@ -51,10 +58,6 @@ def main():
          "--model_name", model_name, "--dimensions", dimensions,
          "--threshold", "0.2", "--linkage", "average"],
 
-        # 11) POS Tagging
-        ["python3", "./evaluation/PoSTagging.py",
-         "--file", "techniques_clean.csv"],
-
         # 12) Read Clusters (Agglomerative)
         ["python3", "./clustering/ReadCluster.py",
          "--model_name", model_name, "--file", f"agc_{dimensions}_0.2_average.csv"],
@@ -64,7 +67,12 @@ def main():
          "--model_name", model_name, "--file", f"hdbscan_{dimensions}_5_2.csv"],
     ]
 
-    for cmd in tqdm(commands,"Run commands"):
+    if text_preprocessing:
+        for cmd in tqdm(commands_preprocessing, "Run preprocessing: "):
+            print(f"\n>> Running: {' '.join(cmd)}")
+            subprocess.run(cmd, check=True)
+
+    for cmd in tqdm(commands,"Run commands: "):
         print(f"\n>> Running: {' '.join(cmd)}")
         subprocess.run(cmd, check=True)
 
