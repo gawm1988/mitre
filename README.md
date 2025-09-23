@@ -2,7 +2,7 @@
 
 ## Getting started
 ### Dependencies
-Create a [HuggingFace](https://huggingface.co/) access token and install the dependencies (pip freeze > requirements.txt)
+Create a [HuggingFace](https://huggingface.co/) access token and install the dependencies 
 ```bash
 pip install -r requirements.txt
 ```

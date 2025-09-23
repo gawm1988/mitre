@@ -1,3 +1,5 @@
+pip freeze > requirements.txt
+
 # Evaluation
 ## Verben
 - [ ] Konzentration auf die Verben.
