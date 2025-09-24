@@ -83,7 +83,8 @@ clean_nl = orig_series.apply(lambda s: clean_text(s, keep_newlines=True))
 clean_compact = orig_series.apply(lambda s: clean_text(s, keep_newlines=False))
 
 # Attach as new columns (keep original intact)
-#df["text_clean_nl"] = clean_nl
+#df["text"] = orig_series
+#df["text"] = clean_nl
 df["text"] = clean_compact
 
 # ---------- Simple before/after summary ----------

@@ -31,7 +31,7 @@ valid_clusters = valid_clusters[valid_clusters > 1].index
 df_valid = df[df['cluster'].isin(valid_clusters)].copy()
 
 result_df = (
-    df_valid[['ID', 'cluster', 'probability', 'text', 'VERB', 'ADV', 'PROPN', 'NOUN', 'X']].copy()
+    df_valid[['ID', 'cluster', 'probability', 'text', 'tactic_ids', 'VERB', 'ADV', 'PROPN', 'NOUN', 'X']].copy()
 )
 
 result_df['probability'] = result_df['probability'].astype(object).where(result_df['probability'].notna(), 'na')

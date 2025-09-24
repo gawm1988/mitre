@@ -1,5 +1,15 @@
 import pandas as pd
 import requests
+import ast
+
+cluster_df = pd.read_csv('../resources/all-MiniLM-L6-v2/clustering/agc_384_0.2_average_clusters.csv')
+
+# convert entries of column into lists
+cluster_df["VERB"] = cluster_df["VERB"].apply(
+    lambda x: ast.literal_eval(x) if isinstance(x, str) else x
+)
+
+verbs = cluster_df["VERB"].iloc[0]
 
 class Synonym:
     def __init__(self, data):
@@ -33,11 +43,23 @@ def get_synonyms(word:str):
         print(f"No data retrieved for {word} - {response.status_code}")
         return None
 
-verbs = ['circumvent', 'design', 'control', 'gain', 'contain', 'intend', 'limit', 'perform', 'have', 'grant', 'perform', 'consider', 'page', 'perform', 'take', 'build', 'escalate']
+verbs_df = pd.DataFrame(
+    {"verb": [],
+     "synonyms": [],
+     "definitions": []}
+)
+
+import pandas as pd
 
 for verb in verbs:
     verb_info = get_synonyms(verb)
     if verb_info:
         synonym = Synonym(verb_info)
         definitions, synonyms = synonym.get_synonyms()
-        print(f"verb: {verb}\ndefintions: {definitions}\nsynonyms: {synonyms}\n")
+        entry = {"verb": verb, "synonyms": synonyms, "definitions": definitions}
+        entry_df = pd.DataFrame([entry])  # aus dict → DataFrame
+        verbs_df = pd.concat([verbs_df, entry_df], ignore_index=True)
+
+
+print (verbs_df.head())
+verbs_df.to_csv("./synonyms.csv", index=False)
