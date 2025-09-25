@@ -1,3 +1,7 @@
+"""
+This script filters the ID, title, description, and associated tactics from MITRE ATT&CK techniques and writes them to a DataFrame.
+"""
+
 from pathlib import Path
 import pandas as pd
 import argparse

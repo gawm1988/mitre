@@ -1,3 +1,10 @@
+"""
+This script creates numerical vector representations of the technique descriptions.
+Texts whose token count exceeds the model limit (max_sequence_length) are first divided into smaller chunks with overlap
+and aggregated using mean pooling.
+
+The embeddings are saved in a new DataFrame in the corresponding ./resource/{model_name}/embeddings folder.
+"""
 import argparse
 import numpy as np
 import pandas as pd

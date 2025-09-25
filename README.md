@@ -8,7 +8,7 @@ pip install -r requirements.txt
 ```
 
 ### Select a language model
-Select a sentence-transformer model from [huggingface.co](https://huggingface.co/sentence-transformers/models) and download it by executing:
+Select and download a sentence-transformer model from [huggingface.co](https://huggingface.co/sentence-transformers/models) e.g.:
 
 |          Model | [all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) | [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) | [SentSecBERT_10k](https://huggingface.co/QCRI/SentSecBert_10k) |
 |---------------:|:-----------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------:|:--------------------------------------------------------------:|
@@ -22,13 +22,13 @@ python3 ./models/DownloadModel.py --model_name all-MiniLM-L6-v2 --model_path sen
 ```
 
 ### Read data from MITRE ATT&CK matrix
-Download latest version (v17) of the ATT&CK matrix (.xlsx) from [MITRE](https://attack.mitre.org/resources/attack-data-and-tools/).
-Read the ID, title and description, tactics from the matrix and save them as a new list techniques.csv:
+Download latest version (v17) of the ATT&CK matrix (.xlsx) from [MITRE](https://attack.mitre.org/resources/attack-data-and-tools/). Read the id, title and description, tactics from the matrix and save them as a new dataframe [techniques.csv](./resources/techniques.csv):
 ```bash
 python3 ./embeddings/preprocessing/ReadTechniques.py --file enterprise-attack-v17.1.xlsx
 ```
 
 ### Clean Data
+Prepare the texts for further processing by performing:
 - Remove control character (especially \n, \t)
 - Remove line breaks
 - Remove URLs & Markdown-Links, keep link text
@@ -39,20 +39,20 @@ python3 ./embeddings/preprocessing/ReadTechniques.py --file enterprise-attack-v1
 - Remove List marker (- , * , 1.)
 - Remove Non-breaking space (\u00A0)
 - Remove Markdown-Headers (# …)
+The clean texts can be used to create text embeddings. Output dataframe [techniques_clean.csv](resources/techniques_clean.csv)
 ```bash
 python3 ./embeddings/preprocessing/CleanData.py --file techniques.csv
 ```
 
 ## Create numerical representations
 ### Count number of token
+Sentence transformers can only process a limited number of tokens (model.max_seq_length). The number of tokens per text can be displayed using the following script.
 ```bash
 python3 ./embeddings/CountToken.py --file techniques_clean.csv --model_name all-MiniLM-L6-v2
 ```
 
 ### Create Embeddings
-Create embeddings for each technique. The models can handle only a max sequence of tokens. 
-Texts that exceed this limit will be chunked into smaller parts and aggregated by weighted mean pooling 
-to keep the semantic of the sentences. The Embeddings will be saved in ./resources/embeddings/{model-name}\_{dim_size}.csv
+Create text-embeddings for each technique. Texts whose tokens exceed max_sequence_length are chunked into smaller parts and aggregated by weighted mean pooling to keep the semantic of the sentences. The Embeddings will be saved in a new dataframe in the embeddings folder of the corresponding [model](./resources/all-MiniLM-L6-v2/embeddings)
 ```bash
 python3 ./embeddings/CreateEmbeddings.py --model_name all-MiniLM-L6-v2
 ```

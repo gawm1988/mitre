@@ -1,3 +1,7 @@
+"""
+This script removes special characters and formatting and saves the cleaned texts in a new DataFrame.
+"""
+
 import pandas as pd, re, unicodedata, html
 import argparse
 

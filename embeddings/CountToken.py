@@ -1,3 +1,7 @@
+"""
+This script determines the number of tokens.
+"""
+
 import pandas as pd
 from transformers import AutoTokenizer
 import argparse
