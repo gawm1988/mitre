@@ -1,3 +1,7 @@
+"""
+This script filters all tupels of vectors that have a cosine similarity score greater than a given threshold (by default 0.75)
+Technique-sub-technique relationships are excluded.
+"""
 import argparse
 import pandas as pd
 

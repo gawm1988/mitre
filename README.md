@@ -46,27 +46,32 @@ python3 ./embeddings/preprocessing/CleanData.py --file techniques.csv
 
 ## Create numerical representations
 ### Count number of token
-Sentence transformers can only process a limited number of tokens (model.max_seq_length). The number of tokens per text can be displayed using the following script.
+Sentence transformers can only process a limited number of tokens (`model.max_seq_length`). The number of tokens per text can be displayed using the following script.
 ```bash
 python3 ./embeddings/CountToken.py --file techniques_clean.csv --model_name all-MiniLM-L6-v2
 ```
 
 ### Create Embeddings
-Create text-embeddings for each technique. Texts whose tokens exceed max_sequence_length are chunked into smaller parts and aggregated by weighted mean pooling to keep the semantic of the sentences. The Embeddings will be saved in a new dataframe in the embeddings folder of the corresponding [model](./resources/all-MiniLM-L6-v2/embeddings)
+Create text-embeddings for each technique. Texts whose tokens exceed max_sequence_length are chunked into smaller parts with overlap and aggregated by weighted mean pooling to keep the semantic of the sentences. The Embeddings will be saved in a new dataframe in the embeddings folder of the corresponding model as [numberOfDimensions.csv](./resources/all-MiniLM-L6-v2/embeddings/384.csv)
 ```bash
 python3 ./embeddings/CreateEmbeddings.py --model_name all-MiniLM-L6-v2
 ```
 ## Build similarity matrix
-Create a matrix which lists pairwise similarities of the techniques. 
+Precompute a matrix which lists pairwise cosine similarities between the text embeddings. The matrix can be used as input parameter for clustering algorithms and is stored in the corresponding similarity folder of each model as [sim_matrix_numberOfDimensions.csv](./resources/all-MiniLM-L6-v2/similarity/sim_matrix_384.csv).
+Cosine similarity between two vectors is defined as: <br>
+    $$cos(x,y) = x · y / (||x|| * ||y||)$$
+where:
+    <center>
+    x · y is the dot product of vectors x and y.<br>
+    ||x|| is the Euclidean length (magnitude) of vector x.<br>
+    ||y|| is the Euclidean length (magnitude) of vector y.
+    </center>
 ```bash
 python3 ./embeddings/CreateSimilarityMatrix.py --model_name all-MiniLM-L6-v2 --dimensions 384
 ```
 
 ## Read similar techniques
-Read the techniques that exceed a given cosine similarity score (default 0.75). Technique - sub-techniques relationships will be ignored: <br>
-\>= 0.85 → Duplicates/Paraphrases (almost identical) <br>
-0.75 - 0.85 → clearly semantically similar
-
+Filter tuples of techniques that exceed a given cosine similarity score (default 0.75). Technique - sub-techniques relationships will be ignored. A score of greater than 0.85 indicates duplicates or paraphrases (almost identical), between 0.75 - 0.85 a clearly semantically similarity. The tupels are saved in a file within the similarity folder of each model: [sim_tupel_numberOfDimensions.csv](./resources/all-MiniLM-L6-v2/similarity/sim_tupels_384_0.85.csv)
 ```bash
 python3 ./embeddings/ReadSimilarTechniques.py --model_name all-MiniLM-L6-v2 --dimensions 384 --threshold 0.85
 ```

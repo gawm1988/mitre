@@ -1,3 +1,13 @@
+"""
+This scripts calculates the pairwise cosine similarity between two vectors as
+    cos(x,y) = x · y / (||x|| * ||y||)
+where:
+    x · y is the dot product of vectors x and y.
+    ||x|| is the Euclidean length (magnitude) of vector x.
+    ||y|| is the Euclidean length (magnitude) of vector y.
+"""
+
+
 import argparse
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity

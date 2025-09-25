@@ -1,3 +1,7 @@
+"""
+Script to download and save a sentence-transformer model from [huggingface.co](https://huggingface.co/sentence-transformers).
+"""
+
 import argparse
 from sentence_transformers import SentenceTransformer
 import os
