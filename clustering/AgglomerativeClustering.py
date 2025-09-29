@@ -1,6 +1,15 @@
+"""
+Performs Agglomerative Clustering on text embeddings using cosine distance and a user-defined threshold.
+Pure Technique/Subtechnique clusters are removed and the remaining clusters are saved as CSV.
+Parameters:
+    --model_name:   Name of the sentence-transformer model
+    --dimensions:   Embedding dimensionality (used to select the correct embedding file)
+    --threshold:    Distance threshold for cutting the dendrogram (default: 0.25, corresponds to 1 - similarity)
+    --linkage:      Linkage criterion for clustering ("average", "complete", etc.; default: "average")
+"""
+
 import argparse
 import re
-import numpy as np
 import pandas as pd
 from sklearn.cluster import AgglomerativeClustering
 

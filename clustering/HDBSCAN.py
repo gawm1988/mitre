@@ -1,3 +1,13 @@
+"""
+Script to run HDBSCAN-Clustering based on a precomputed similarity matrix.
+Pure Technique/Subtechnique clusters are removed and the remaining clusters are saved as CSV.
+Parameter:
+    --model_name:       Name of the sentence-transformer model
+    --dimensions:       Number of dimensions (used to select the correct similarity matrix file)
+    --min_cluster_size: Minimum number of points of a cluster (Default: 5)
+    --min_samples:      Minimum number of points within the radius of a core point (Default: 2)
+"""
+
 import argparse
 import re
 import numpy as np
