@@ -42,6 +42,7 @@ NBSP = re.compile(r"\u00A0")                              # non-breaking space
 TRIM_AROUND_NEWLINE = re.compile(r"[ \t]*\n[ \t]*")       # trim spaces around \n
 MULTISPACE = re.compile(r"[ \t]{2,}")                     # multi spaces/tabs
 MULTINEWLINE = re.compile(r"\n{3,}")                      # >2 newlines
+OPEN_PAREN_FIX = re.compile(r"(?<=\w)\(")
 
 def clean_text(text: str, keep_newlines: bool = False) -> str:
     """Remove HTML/Markdown, normalize Unicode, and tidy whitespace."""
@@ -70,6 +71,7 @@ def clean_text(text: str, keep_newlines: bool = False) -> str:
     t = TAG.sub(" ", t)                       # strip HTML tags
     t = URLS.sub(" ", t)                      # remove naked URLs
     t = re.sub(r"([.,;:!?)])([\(\[\{])", r"\1 \2", t) # add space before brackets
+    t = OPEN_PAREN_FIX.sub(" (", t)
 
     if keep_newlines:
         # Collapse excessive spaces, tidy newlines but preserve paragraphs
