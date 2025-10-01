@@ -69,6 +69,7 @@ def clean_text(text: str, keep_newlines: bool = False) -> str:
     t = LIST_BULLETS.sub("", t)
     t = TAG.sub(" ", t)                       # strip HTML tags
     t = URLS.sub(" ", t)                      # remove naked URLs
+    t = re.sub(r"([.,;:!?)])([\(\[\{])", r"\1 \2", t) # add space before brackets
 
     if keep_newlines:
         # Collapse excessive spaces, tidy newlines but preserve paragraphs
